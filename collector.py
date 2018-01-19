@@ -44,6 +44,15 @@ class Repository():
             with open(commits_file, 'w') as file:
                 json.dump(commits, file, indent = 4)
 
+    def forks(self):
+        forks_file = self.folder + '/forks.json'
+
+        if not os.path.isfile(forks_file):
+            forks = self.collector.forks()
+    
+            with open(forks_file, 'w') as file:
+                json.dump(forks, file, indent = 4)
+
 def repositories_in_parallel(project):
     collector = GitRepository.Repository(project['organization'], project['name'], crawler)
     folder = dataset_folder + project['name']
@@ -52,6 +61,7 @@ def repositories_in_parallel(project):
     R.about()
     R.pull_requests()
     R.commits()
+    R.forks()
 
 if __name__ == '__main__':
     dataset_folder = 'Dataset/'

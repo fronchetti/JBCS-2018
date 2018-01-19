@@ -59,17 +59,17 @@ def pull_requests(data, output_file):
         writer = csv.DictWriter(output, fieldnames=fieldnames)
         writer.writeheader()
         for date in employees_opened:
-            writer.writerow({'month': date, 'pull_type': 'opened', 'pull_amount': employees_opened[date], 'user_type':'employees'})
+            writer.writerow({'month': date, 'pull_type': 'opened', 'pull_amount': employees_opened[date], 'user_type':'Employees'})
         for date in employees_closed:
-            writer.writerow({'month': date, 'pull_type': 'closed', 'pull_amount': employees_closed[date], 'user_type':'employees'})
+            writer.writerow({'month': date, 'pull_type': 'closed', 'pull_amount': employees_closed[date], 'user_type':'Employees'})
         for date in employees_merged:
-            writer.writerow({'month': date, 'pull_type': 'merged', 'pull_amount': employees_merged[date], 'user_type':'employees'})
+            writer.writerow({'month': date, 'pull_type': 'merged', 'pull_amount': employees_merged[date], 'user_type':'Employees'})
         for date in volunteers_opened:
-            writer.writerow({'month': date, 'pull_type': 'opened', 'pull_amount': volunteers_opened[date], 'user_type':'volunteers'})
-        for date in volunteers_closed:
-            writer.writerow({'month': date, 'pull_type': 'closed', 'pull_amount': volunteers_closed[date], 'user_type':'volunteers'})
+            writer.writerow({'month': date, 'pull_type': 'opened', 'pull_amount': volunteers_opened[date], 'user_type':'Volunteers'})
+        for date in volunteers_closed:  
+            writer.writerow({'month': date, 'pull_type': 'closed', 'pull_amount': volunteers_closed[date], 'user_type':'Volunteers'})
         for date in volunteers_merged:
-            writer.writerow({'month': date, 'pull_type': 'merged', 'pull_amount': volunteers_merged[date], 'user_type':'volunteers'})
+            writer.writerow({'month': date, 'pull_type': 'merged', 'pull_amount': volunteers_merged[date], 'user_type':'Volunteers'})
 
 
 if __name__ == '__main__':
