@@ -320,3 +320,57 @@ class Repository:
                 page_number = page_number + 1
 
         return forks
+
+    def commits_in_pull_request(self, number):
+        commits = []
+        request = ['Waiting for requisition']
+        page_number = 1
+
+        print '[Repository] Returning all commits in pull request #' + str(number)
+
+        while(request):
+            request = self.github.request('repos/' + self.organization + '/' + self.name +
+                                          '/pulls/' + str(number) + '/commits', ['page=' + str(page_number)])
+            if request:
+                for commit in request:
+                    commits.append(commit)
+            
+            page_number = page_number + 1
+
+        return commits
+
+    def comments_in_pull_request(self, number):
+        comments = []
+        request = ['Waiting for requisition']
+        page_number = 1
+
+        print '[Repository] Returning all comments in pull request #' + str(number)
+
+        while(request):
+            request = self.github.request('repos/' + self.organization + '/' + self.name +
+                                          '/issues/' + str(number) + '/comments', ['page=' + str(page_number)])
+            if request:
+                for comment in request:
+                    comments.append(comment)
+            
+            page_number = page_number + 1
+
+        return comments
+
+    def reviews_in_pull_request(self, number):
+        reviews = []
+        request = ['Waiting for requisition']
+        page_number = 1
+
+        print '[Repository] Returning all reviews in pull request #' + str(number)
+
+        while(request):
+            request = self.github.request('repos/' + self.organization + '/' + self.name +
+                                          '/pulls/' + str(number) + '/comments', ['page=' + str(page_number)])
+            if request:
+                for review in request:
+                    reviews.append(review)
+            
+            page_number = page_number + 1
+
+        return reviews

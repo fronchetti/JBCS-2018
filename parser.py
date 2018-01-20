@@ -83,6 +83,6 @@ if __name__ == '__main__':
     for project in projects:
         folder = dataset_folder + project['name']
 
-        with open(folder + '/pulls.json') as data_file:
+        with open(folder + '/pulls.json', 'r') as data_file:
             data = json.load(data_file)
             pull_requests(data, folder + '/pulls.csv')
