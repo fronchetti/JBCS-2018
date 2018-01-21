@@ -14,7 +14,7 @@ setwd("/home/fronchetti/Documentos/JBCS-2018") # Working directory
 # File type: EPS
 # W: 600 H: 400
 
-pulls <- read.csv("Dataset/atom/pulls.csv", colClasses=c("Date",NA, NA, NA))
+pulls <- read.csv("Dataset/atom/pull_requests_per_month.csv", colClasses=c("Date",NA, NA, NA))
 
 data <- subset(pulls, pull_type == "opened")
 ggplot(data, aes(x=month, y=pull_amount, colour=user_type, group=user_type)) +

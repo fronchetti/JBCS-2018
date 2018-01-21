@@ -8,8 +8,7 @@ except ImportError as error:
     raise ImportError(error)
 
 def monthly_pull_requests(pull_requests):
-    # This method returns the monthly distribution of pull requests for each
-    # project.
+
     frequency = collections.OrderedDict()
     for pull_request in pull_requests:
         date = datetime.strptime(
@@ -21,6 +20,8 @@ def monthly_pull_requests(pull_requests):
             frequency[date] = frequency[date] + 1
     return frequency
 
+# Outputs the monthly distribution of pull requests in a project. (Source: pull_requests.json)
+# If you don't have a pull_requests.json file for your project, use collector.py!
 def pull_requests(data, output_file):
     employees_opened = []
     employees_closed = []
@@ -83,6 +84,6 @@ if __name__ == '__main__':
     for project in projects:
         folder = dataset_folder + project['name']
 
-        with open(folder + '/pulls.json', 'r') as data_file:
+        with open(folder + '/pull_requests.json', 'r') as data_file:
             data = json.load(data_file)
-            pull_requests(data, folder + '/pulls.csv')
+            pull_requests(data, folder + '/pull_requests_per_month.csv')

@@ -374,3 +374,8 @@ class Repository:
             page_number = page_number + 1
 
         return reviews
+
+    def commit_information(self, url):
+        url = url.replace('https://api.github.com/', '')
+        information = self.github.request(url)
+        return information
