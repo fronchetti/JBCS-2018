@@ -39,16 +39,16 @@ class Repository():
 
     # Creates a summary of pull request's information. (Source: pull_requests.json)
     # Contains: user position (volunteer/employee), user login, pull request merged date, num. of commits, comments and reviews.
-    def pull_requests_summary(self):
+    def merged_pull_requests_summary(self):
         pulls_file = self.folder + '/pull_requests.json'
-        pulls_summary_file = self.folder + '/pull_requests_summary.csv'
+        pulls_summary_file = self.folder + '/merged_pull_requests_summary.csv'
 
         if os.path.isfile(pulls_file) and not os.path.isfile(pulls_summary_file):
             with open(pulls_file, 'r') as pulls:
                 data = json.load(pulls)
 
                 with open(pulls_summary_file, 'a') as output:
-                    fieldnames = ['pull_request', 'number_of_commits', 'number_of_comments','number_of_reviews','user_type', 'user_login', 'merged_at']
+                    fieldnames = ['pull_request', 'number_of_commits', 'number_of_comments','number_of_reviews','user_type', 'user_login', 'merged_at', 'number_of_additions', 'number_of_deletions','number_of_files_changed']
                     writer = csv.DictWriter(output, fieldnames=fieldnames)
                     writer.writeheader()
 
@@ -58,42 +58,25 @@ class Repository():
                             number_of_comments = self.collector.comments_in_pull_request(pull_request['number'])
                             number_of_reviews = self.collector.reviews_in_pull_request(pull_request['number'])
 
+                            number_of_additions = 0
+                            number_of_deletions = 0
+                            number_of_files_changed = 0
+
+                            for commit in number_of_commits:
+                                url = commit['url']
+                                commit_information = self.collector.commit_information(url)
+
+                                if 'stats' in commit_information:
+                                    number_of_additions = number_of_additions + int(commit_information['stats']['additions'])
+                                    number_of_deletions = number_of_deletions + int(commit_information['stats']['deletions'])
+                                if 'files' in commit_information:
+                                    number_of_files_changed = number_of_files_changed + len(commit_information['files'])
+
+
                             if pull_request['user']['site_admin'] == True:
-                                writer.writerow({'pull_request': pull_request['number'], 'number_of_commits': len(number_of_commits), 'number_of_comments': len(number_of_comments), 'number_of_reviews': len(number_of_reviews), 'user_type': 'Employees', 'user_login': pull_request['user']['login'], 'merged_at':pull_request['merged_at']})
+                                writer.writerow({'pull_request': pull_request['number'], 'number_of_commits': len(number_of_commits), 'number_of_comments': len(number_of_comments), 'number_of_reviews': len(number_of_reviews), 'user_type': 'Employees', 'user_login': pull_request['user']['login'], 'merged_at':pull_request['merged_at'], 'number_of_additions': number_of_additions, 'number_of_deletions': number_of_deletions, 'number_of_files_changed': number_of_files_changed})
                             else:
-                                writer.writerow({'pull_request': pull_request['number'], 'number_of_commits': len(number_of_commits), 'number_of_comments': len(number_of_comments), 'number_of_reviews': len(number_of_reviews), 'user_type': 'Volunteers', 'user_login': pull_request['user']['login'], 'merged_at':pull_request['merged_at']})
-        else:
-            if os.path.isfile(pulls_summary_file):
-                input_file = csv.DictReader(open(pulls_summary_file, 'r'))
-                fieldnames = input_file.fieldnames + ['number_of_additions', 'number_of_deletions','number_of_files_changed']
-                output_file = csv.DictWriter(open(self.folder + '/pull_requests_summary_updated.csv', 'a'), fieldnames=fieldnames)
-                output_file.writeheader()
-
-                for row in input_file:
-                    dictionary = row
-                    commits = self.collector.commits_in_pull_request(row['pull_request'])
-                    number_of_additions = 0
-                    number_of_deletions = 0
-                    number_of_files_changed = 0
-
-                    for commit in commits:
-                        url = commit['url']
-                        commit_information = self.collector.commit_information(url)
-
-                        if 'stats' in commit_information:
-                            number_of_additions = number_of_additions + int(commit_information['stats']['additions'])
-                            number_of_deletions = number_of_deletions + int(commit_information['stats']['deletions'])
-                        if 'files' in commit_information:
-                            number_of_files_changed = number_of_files_changed + len(commit_information['files'])
-
-                    dictionary['number_of_additions'] = number_of_additions
-                    dictionary['number_of_deletions'] = number_of_deletions
-                    dictionary['number_of_files_changed'] = number_of_files_changed
-
-                    output_file.writerow(dictionary)
-
-
-
+                                writer.writerow({'pull_request': pull_request['number'], 'number_of_commits': len(number_of_commits), 'number_of_comments': len(number_of_comments), 'number_of_reviews': len(number_of_reviews), 'user_type': 'Volunteers', 'user_login': pull_request['user']['login'], 'merged_at':pull_request['merged_at'], 'number_of_additions': number_of_additions, 'number_of_deletions': number_of_deletions, 'number_of_files_changed': number_of_files_changed})
 
 def repositories_in_parallel(project):
     collector = GitRepository.Repository(project['organization'], project['name'], crawler)
@@ -102,7 +85,7 @@ def repositories_in_parallel(project):
     R = Repository(collector, folder)
     R.about()
     R.pull_requests()
-    R.pull_requests_summary()
+    R.merged_pull_requests_summary()
 
 if __name__ == '__main__':
     dataset_folder = 'Dataset/'
